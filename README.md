@@ -1,3 +1,131 @@
+# 🧬 Patent2Net - Fork Otimizado (NIT Materiais -  UFSCar)
+
+Este repositório é um _fork_ otimizado da ferramenta de mineração de dados patentários **Patent2Net (P2N-Docker)**.
+
+Ele foi desenvolvido para suprir as necessidades de pesquisa do **NIT-Materiais da UFSCar** (Universidade Federal de São Carlos), com o intuito principal de **facilitar e estabilizar o uso do Patent2Net no Linux Mint** (testado rigorosamente na versão 22.3 - Cinnamon 64-bit).
+
+As modificações arquiteturais presentes neste _fork_ foram projetadas para contornar problemas com atualizações de pacotes do ecossistema Python/Flask, corrigir bugs nativos de extração de arquivos e oferecer uma experiência de usuário (UX) visando reduzir o uso do terminal no dia a dia.
+## 🛠️ Modificações Implementadas
+
+Nos testes iniciais ocorreram falhas silenciosas durante minerações massivas e problemas com os caminhos de diretórios. Em busca de uma implementação mais flexível utilizou-se a técnica de _hot-swapping_ via `docker-compose.yml`. Para mitigar os problemas encontrados, o arquivo `app.py` e a infraestrutura foram reescritos com as seguintes adaptações:
+
+1. **Correção da Extração Recursiva (O "Bug do ZIP Vazio"):** A função nativa (`pathlib.Path.iterdir()`) foi substituída pelo motor `os.walk` com compressão `ZIP_STORED`. Isso garante que pesquisas complexas, com múltiplas subpastas, sejam compactadas e baixadas, sem corromper o arquivo final.
+    
+2. **Atualização de Depreciação do Flask:** O comando `attachment_filename` foi descontinuado nas versões recentes do Flask (causando falha no download). Atualizado para o método padrão atual: `download_name`.
+    
+3. **Políticas de "Anti-Cache Nuclear" na Interface (Lentille):** O navegador tendia a fazer um cache agressivo da interface web (`dex.js`). Foram implementados _headers_ forçados de expiração e destruição de validadores `ETag` para garantir que o painel reflita o andamento real das pesquisas.
+    
+4. **Auto-Discovery de Projetos Órfãos:** Implementada uma varredura física forçada no diretório `./DATA/`. Se uma pesquisa for finalizada de forma anômala ou transferida via pendrive, a interface web irá auto-indexá-la, evitando a perda de visualização.
+    
+5. **Código Agnóstico (Remoção de Absolute Paths):** Remoção de todos os caminhos fixos (ex: `/home/p2n/...`) de dentro do `app.py`, substituindo-os por variáveis dinâmicas de diretório base (`BASE_DIR`).
+    
+6. **Instalador Automático e Interface Gráfica nativa (Zenity):** Criação de scripts _shell_ (`instalador-mint.sh` e `painel_p2n.sh`) que criam atalhos no Menu Iniciar e na Área de Trabalho, baixam os contêineres com progresso visual e permitem iniciar/parar o servidor com um clique. Um terminal de monitoramento (terceira opção) também está disponível no menu para  acompanhamento dos trabalhos.
+
+## ⚙️ Instalação dos Pré-requisitos (Docker)
+
+O único requisito para rodar este sistema é ter o Docker devidamente instalado. Para contornar peculiaridades de repositórios do Linux Mint, recomendamos o uso do script oficial de instalação automatizada:
+
+### 1. Baixar e Rodar o Script Oficial
+
+O próprio Docker fornece um script que detecta o seu sistema e faz a instalação limpa. Execute os comandos abaixo no terminal:
+
+```bash
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+```
+
+_(Aguarde o script terminar todo o processo de download e configuração)._
+
+### 2. Ativar e Iniciar o Serviço
+
+Certifique-se de que o Docker inicialize junto com o sistema:
+
+```bash
+sudo systemctl enable docker
+sudo systemctl start docker
+```
+
+### 3. Permissão para o Usuário (Sem uso de Sudo)
+
+Adicione seu usuário atual ao grupo do Docker para gerenciar os contêineres sem precisar de privilégios de administrador a todo momento:
+
+```bash
+sudo usermod -aG docker $USER
+```
+
+Também pode ser feito pelo menu através de Usuários e Grupos!
+
+⚠️ **ATENÇÃO:** 
+
+**Reinicie o seu computador** (ou **faça logoff/logon**) para salvar esta alteração de permissão.
+
+### 4. Validar o Funcionamento
+
+Após reiniciar, execute o comando de teste para validar se o ambiente está 100% operacional:
+
+```bash
+docker run hello-world
+```
+
+### 5. Configuração de Firewall (Opcional)
+
+Se o Linux Mint estiver com o firewall ativado (UFW) e a intenção for permitir que **outros computadores da mesma rede** acessem o Patent2Net, libere a porta 5000 executando:
+
+```bash
+sudo ufw allow 5000/tcp
+```
+
+_(Se você for usar o sistema apenas localmente na própria máquina, este passo pode ser ignorado)._
+## 🚀 Como Iniciar o Patent2Net Otimizado
+
+Com o Docker instalado, a utilização do sistema requer uso mínimo do terminal:
+
+1. Faça o clone ou baixe o `.zip` deste repositório para o seu computador.
+    
+2. Para usar o git:
+
+**Se o git não estiver instalado use:**
+```bash
+sudo apt install git
+```
+
+**Com o git instalado:**
+```bash
+git clone https://github.com/Alex-Md98/P2N-Docker.git
+```
+
+3. Acesse a pasta extraída (`P2N-Docker`).
+    
+4. Dê um duplo clique no arquivo **`instalador-mint.sh`** e clique em "Executar".
+
+⚠️ **ATENÇÃO:** 
+
+**O Problema do Script Executável (O clique duplo)** Quando baixamos arquivos do GitHub (especialmente pelo botão de baixar `.zip`), o Linux por padrão remove a permissão de "executável" dos scripts por segurança. Se você baixar, der o duplo clique no **`instalador-mint.sh`** e ele abrir num bloco de notas em vez de executar, não se desespere! É só clicar com o botão direito nele -> **Propriedades** -> Aba **Permissões** -> Marcar a caixinha **"Permitir execução do arquivo como um programa"**. Depois disso, o duplo clique funciona.
+
+5. O instalador fará o _download_ visual dos componentes e criará os atalhos no seu sistema.
+    
+6. A partir de agora, basta procurar por **Patent2Net** no seu Menu Iniciar ou clicar no atalho da sua Área de Trabalho para iniciar o sistema!
+    
+7. Por fim, abra o navegador de internet e acesse:
+
+http://localhost:5000
+## Problemas de permissões (Caso aconteça!)
+
+Se o cadeado surgir nas pastas dentro de "DATA" e no arquivo .cql dentro de "Config/sav", não se preocupe. Isso acontece pela diferença de proprietários dentro e fora do docker. Depois que terminar a pesquisa e baixar via Download os arquivos eles podem ser apagados para economia de espaço. Se precisar apagar os arquivos manualmente em "./P2N-Docker/DATA" e os .cql em "./P2N-Docker/config/sav/RequestsSet" , abra o terminal dentro de P2N-Docker e digite:
+
+```bash
+sudo chown -R $USER:$USER DATA/ config/
+```
+
+É só apagar depois.
+
+📝 **Mantenedor das Modificações:** Alexandro Alves Madi | NIT Materiais - UFSCar (2026)
+
+
+📜 Documentação Original do Projeto (Upstream)
+-------------
+Abaixo encontra-se a documentação original fornecida pelos desenvolvedores da arquitetura base do Patent2Net.
+-------------
 # P2N-Docker
 [<img src="LogoP2N.png">](https://p2n-v3.readthedocs.io/en/latest/welcome.html)
 
