@@ -100,24 +100,33 @@ git clone https://github.com/Alex-Md98/P2N-Docker.git
 
 ⚠️ **ATENÇÃO:** 
 
-**O Problema do Script Executável (O clique duplo)** Quando baixamos arquivos do GitHub (especialmente pelo botão de baixar `.zip`), o Linux por padrão remove a permissão de "executável" dos scripts por segurança. Se você baixar, der o duplo clique no **`instalador-mint.sh`** e ele abrir num bloco de notas em vez de executar, não se desespere! É só clicar com o botão direito nele -> **Propriedades** -> Aba **Permissões** -> Marcar a caixinha **"Permitir execução do arquivo como um programa"**. Depois disso, o duplo clique funciona.
+**O Problema do Script Executável (O clique duplo):** Quando baixamos arquivos do GitHub (especialmente pelo botão de baixar `.zip`), o Linux por padrão remove a permissão de "executável" dos scripts por segurança. Se você baixar, der o duplo clique no **`instalador-mint.sh`** e ele abrir num bloco de notas em vez de executar, não se desespere! É só clicar com o botão direito nele -> **Propriedades** -> Aba **Permissões** -> Marcar a caixinha **"Permitir execução do arquivo como um programa"**. Depois disso, o duplo clique funciona.
 
 5. O instalador fará o _download_ visual dos componentes e criará os atalhos no seu sistema.
+
+⚠️ **ATENÇÃO:** 
+
+**Problemas de permissões:** Devido à diferença de usuários de sistema entre o Linux Mint e o ambiente isolado do Docker, você pode esbarrar em restrições de leitura/escrita:
+
+1. **A Chave da EPO não salva:** O sistema pode falhar ao tentar gravar a sua credencial via interface no arquivo `cles-epo.txt`.
     
+2. **Cadeados nas Pastas:** Os diretórios `DATA` e `config/sav` (e os arquivos `.cql`) podem aparecer com um ícone de cadeado, impedindo que você os delete manualmente para liberar espaço após o download.
+    
+
+Para corrigir isso  abra o terminal dentro da pasta `P2N-Docker` e execute:
+```
+sudo chown -R $USER:$USER DATA/ config/
+sudo chmod 777 -R DATA/ config/
+sudo chmod 777 cles-epo.txt
+```
+
+Isso resolve o problema. Se o cadeado surgir outra vez, ajuste as permissões repetindo o comando. É só apagar os arquivos depois ou continuar usando a ferramenta normalmente.
+
 6. A partir de agora, basta procurar por **Patent2Net** no seu Menu Iniciar ou clicar no atalho da sua Área de Trabalho para iniciar o sistema!
     
 7. Por fim, abra o navegador de internet e acesse:
 
 http://localhost:5000
-## Problemas de permissões (Caso aconteça!)
-
-Se o cadeado surgir nas pastas dentro de "DATA" e no arquivo .cql dentro de "Config/sav", não se preocupe. Isso acontece pela diferença de proprietários dentro e fora do docker. Depois que terminar a pesquisa e baixar via Download os arquivos eles podem ser apagados para economia de espaço. Se precisar apagar os arquivos manualmente em "./P2N-Docker/DATA" e os .cql em "./P2N-Docker/config/sav/RequestsSet" , abra o terminal dentro de P2N-Docker e digite:
-
-```bash
-sudo chown -R $USER:$USER DATA/ config/
-```
-
-É só apagar depois.
 
 📝 **Mantenedor das Modificações:** Alexandro Alves Madi | NIT Materiais - UFSCar (2026)
 
