@@ -1,5 +1,19 @@
----
-version: '3.6'
+# ==============================================================================
+# PATENT2NET - DOCKER OPTIMIZED DEPLOYMENT
+# ==============================================================================
+# MODIFIED BY: Alexandro Alves Madi
+# DATE: May 2026
+# INSTITUTION: UFSCar / NIT Materiais
+#
+# MODIFICATIONS:
+# 1. Volume bind mapping for external API credentials (cles-epo.txt).
+# 2. Hot-swapping the core application routing file (app.py) via bind mount.
+#    This allows the injection of recursive extraction fixes, anti-cache headers,
+#    and auto-discovery logic without rebuilding the upstream base image.
+# ==============================================================================
+
+#version: '3.6'
+
 services:
   elasticP2N:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.3.0
@@ -51,6 +65,9 @@ services:
         - type: bind
           source: ./config/sav/RequestsSets
           target: /home/p2n/P2N-V3/RequestsSets
+        - ./cles-epo.txt:/home/p2n/P2N-V3/cles-epo.txt
+        # ESTA LINHA FAZ A MÁGICA:
+        - ./app.py:/home/p2n/P2N-V3/app.py
 
     ports:
       - 5000:5000
