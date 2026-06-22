@@ -57,6 +57,7 @@ services:
 
   p2nv3:
     container_name: p2nv3
+    restart: always
     image:  docker.io/dreymond/patent2net:p2nv3
     volumes:
         - type: bind
@@ -66,8 +67,9 @@ services:
           source: ./config/sav/RequestsSets
           target: /home/p2n/P2N-V3/RequestsSets
         - ./cles-epo.txt:/home/p2n/P2N-V3/cles-epo.txt
-        # ESTA LINHA FAZ A MÁGICA:
         - ./app.py:/home/p2n/P2N-V3/app.py
+        # ESTA NOVA LINHA INJETA O FRONTEND CORRIGIDO:
+        - ./web_app:/home/p2n/P2N-V3/web_app
 
     ports:
       - 5000:5000
