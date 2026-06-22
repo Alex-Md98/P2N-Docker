@@ -128,7 +128,8 @@ Isso resolve o problema. Se o cadeado surgir outra vez, ajuste as permissões re
     
 7. Por fim, abra o navegador de internet e acesse:
 
-http://localhost:5000
+http://localhost:5000 (uso local)
+http://_endereço_:5000 (via rede)
 
 📝 **Mantenedor das Modificações:** Alexandro Alves Madi | NIT Materiais - UFSCar (2026)
 
