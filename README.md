@@ -74,7 +74,7 @@ Se o Linux Mint estiver com o firewall ativado (UFW) e a intenção for permitir
 ```bash
 sudo ufw allow 5000/tcp
 ```
-A descoberta do endereço pode ser feita pelo terminal, usando o comando "hostname -I".
+A descoberta do endereço pode ser feita via terminal, usando o comando "hostname -I".
 
 _(Se você for usar o sistema apenas localmente na própria máquina, este passo pode ser ignorado)._
 
